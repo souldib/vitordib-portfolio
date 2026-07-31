@@ -1,3 +1,4 @@
+import { About } from "@/components/about";
 import { Contact } from "@/components/contact";
 import { Credentials } from "@/components/credentials";
 import { Dashboards } from "@/components/dashboards";
@@ -24,6 +25,7 @@ export default function Home() {
         <Expertise />
         <Experience />
         <Credentials />
+        <About />
         <Contact />
       </main>
     </>

@@ -394,11 +394,27 @@ export const languages = [
   { name: "Spanish", level: "Fluent" },
 ] as const;
 
+export const about = {
+  title: "The person behind the platforms.",
+  photo: "/vitor-portrait.jpg",
+  paragraphs: [
+    "I'm Vitor — 30, based in Goiânia, Brazil, working remotely with teams spread across several time zones.",
+    "Away from the editor I'm usually behind a drum kit or at the piano. Music came long before data did, and it is still what resets my head after a stubborn architecture problem.",
+    "The rest of my time goes to online games, planning the next trip, and stopping to greet every animal that crosses my path.",
+  ],
+  interests: [
+    { icon: "music", label: "Drums & piano" },
+    { icon: "gaming", label: "Online gaming" },
+    { icon: "travel", label: "Travelling" },
+    { icon: "animals", label: "Animals" },
+  ],
+} as const;
+
 export const nav = [
   { label: "Work", href: "#work" },
   { label: "Dashboards", href: "#dashboards" },
   { label: "Expertise", href: "#expertise" },
   { label: "Experience", href: "#experience" },
-  { label: "Credentials", href: "#credentials" },
+  { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
 ] as const;
