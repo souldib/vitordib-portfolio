@@ -95,6 +95,42 @@ export function Counter({
   );
 }
 
+/** Gently pulls its child toward the pointer while hovered. */
+export function Magnetic({
+  children,
+  strength = 0.22,
+  className,
+}: {
+  children: ReactNode;
+  strength?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const x = useSpring(0, { stiffness: 220, damping: 18, mass: 0.5 });
+  const y = useSpring(0, { stiffness: 220, damping: 18, mass: 0.5 });
+
+  return (
+    <motion.div
+      ref={ref}
+      style={{ x, y }}
+      className={`inline-block ${className ?? ""}`}
+      onPointerMove={(event) => {
+        const node = ref.current;
+        if (!node || event.pointerType !== "mouse") return;
+        const rect = node.getBoundingClientRect();
+        x.set((event.clientX - rect.left - rect.width / 2) * strength);
+        y.set((event.clientY - rect.top - rect.height / 2) * strength);
+      }}
+      onPointerLeave={() => {
+        x.set(0);
+        y.set(0);
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
 /** Card whose surface picks up a soft light that follows the pointer. */
 export function SpotlightCard({
   children,

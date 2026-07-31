@@ -1,12 +1,28 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "motion/react";
+import Image from "next/image";
 import { useRef } from "react";
 import { ArrowDownRight, ArrowUpRight, Download, MapPin } from "lucide-react";
-import { companies, hero, site, stats } from "@/content/site";
-import { Aurora, Counter, GridBackdrop } from "@/components/ui";
+import { hero, site, stats, trustedBy } from "@/content/site";
+import { Aurora, Counter, GridBackdrop, Magnetic } from "@/components/ui";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+const logoSizes: Record<(typeof trustedBy)[number]["size"], string> = {
+  lockup: "h-12 sm:h-14",
+  stacked: "h-11 sm:h-12",
+  square: "h-8 sm:h-9",
+  wordmark: "h-6 sm:h-7",
+};
+
+function StatValue({ value }: { value: string }) {
+  const numeric = /^(\d+)(.*)$/.exec(value);
+  if (numeric) {
+    return <Counter value={Number(numeric[1])} suffix={numeric[2]} />;
+  }
+  return <span className="italic">{value}</span>;
+}
 
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -45,7 +61,7 @@ export function Hero() {
                 transition={{ duration: 1.05, delay: 0.12 * index + 0.15, ease: EASE }}
                 className={`block ${
                   index === hero.headline.length - 1
-                    ? "text-gradient italic pr-2"
+                    ? "text-gradient text-gradient-animated italic pr-2"
                     : "text-ivory"
                 }`}
               >
@@ -67,24 +83,28 @@ export function Hero() {
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <a
-                href="#contact"
-                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-ivory px-6 py-3 text-sm font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
-              >
-                <span className="relative z-10">Start a conversation</span>
-                <ArrowUpRight
-                  size={16}
-                  className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                />
-              </a>
-              <a
-                href={site.cv}
-                download
-                className="inline-flex items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-ivory transition-all duration-300 hover:border-azure/60 hover:bg-azure/10"
-              >
-                <Download size={15} />
-                Download CV
-              </a>
+              <Magnetic>
+                <a
+                  href="#contact"
+                  className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-ivory px-6 py-3 text-sm font-medium text-ink"
+                >
+                  <span className="relative z-10">Start a conversation</span>
+                  <ArrowUpRight
+                    size={16}
+                    className="relative z-10 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                  />
+                </a>
+              </Magnetic>
+              <Magnetic strength={0.16}>
+                <a
+                  href={site.cv}
+                  download
+                  className="inline-flex items-center gap-2 rounded-full border border-line-strong px-6 py-3 text-sm text-ivory transition-colors duration-300 hover:border-azure/60 hover:bg-azure/10"
+                >
+                  <Download size={15} />
+                  Download CV
+                </a>
+              </Magnetic>
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
@@ -105,46 +125,59 @@ export function Hero() {
           >
             <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line">
               {stats.map((stat) => (
-                <div key={stat.label} className="bg-ink-soft/80 p-5 backdrop-blur-sm">
-                  <div className="font-display text-3xl text-ivory sm:text-4xl">
-                    <Counter value={stat.value} suffix={stat.suffix} />
+                <div
+                  key={stat.label}
+                  className="group bg-ink-soft/80 p-5 backdrop-blur-sm transition-colors duration-500 hover:bg-ink-raised/80"
+                >
+                  <div className="font-display text-3xl text-ivory sm:text-[2.1rem]">
+                    <StatValue value={stat.value} />
                   </div>
-                  <p className="mt-1.5 text-xs leading-snug text-faint">{stat.label}</p>
+                  <p className="mt-1.5 text-xs leading-snug text-faint transition-colors duration-500 group-hover:text-muted">
+                    {stat.label}
+                  </p>
                 </div>
               ))}
             </div>
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="mt-16 border-t border-line py-6 sm:mt-20"
-        >
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <span className="font-mono text-[11px] uppercase tracking-[0.28em] text-faint">
-              Trusted by teams at
-            </span>
-            <div className="flex flex-wrap items-center gap-x-7 gap-y-3">
-              {companies.map((company) => (
-                <span
-                  key={company}
-                  className="text-sm text-muted/70 transition-colors duration-300 hover:text-ivory"
-                >
-                  {company}
-                </span>
-              ))}
-            </div>
+        <div className="mt-16 border-t border-line pt-10 sm:mt-20">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.95 }}
+            className="text-center font-mono text-[11px] uppercase tracking-[0.32em] text-faint"
+          >
+            Trusted by teams at
+          </motion.p>
+          <div className="mt-9 flex flex-wrap items-center justify-center gap-x-12 gap-y-9 sm:gap-x-16 lg:gap-x-20">
+            {trustedBy.map((company, index) => (
+              <motion.div
+                key={company.name}
+                initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.9, delay: 1.05 + index * 0.09, ease: EASE }}
+                className="group"
+                title={company.name}
+              >
+                <Image
+                  src={company.logo}
+                  alt={`${company.name} logo`}
+                  width={240}
+                  height={120}
+                  className={`${logoSizes[company.size]} w-auto opacity-70 transition-all duration-500 group-hover:-translate-y-1 group-hover:opacity-100`}
+                />
+              </motion.div>
+            ))}
           </div>
-        </motion.div>
+        </div>
 
         <motion.a
           href="#work"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1.2 }}
-          className="mt-4 inline-flex items-center gap-2 pb-16 font-mono text-[11px] uppercase tracking-[0.28em] text-faint transition-colors hover:text-ivory"
+          transition={{ duration: 1, delay: 1.5 }}
+          className="mt-14 inline-flex items-center gap-2 pb-16 font-mono text-[11px] uppercase tracking-[0.28em] text-faint transition-colors hover:text-ivory"
         >
           <motion.span
             animate={{ y: [0, 5, 0] }}

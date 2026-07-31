@@ -157,6 +157,20 @@
   }
 }
 
+@keyframes gradient-pan {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+.text-gradient-animated {
+  background-size: 220% 100%;
+  animation: gradient-pan 7s ease-in-out infinite alternate;
+}
+
 @keyframes pulse-ring {
   0% {
     transform: scale(0.9);

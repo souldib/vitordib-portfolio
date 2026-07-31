@@ -21,19 +21,26 @@ export const hero = {
 } as const;
 
 export const stats = [
-  { value: 7, suffix: "+", label: "Years building data platforms" },
-  { value: 60, suffix: "%", label: "Platform cost reduction" },
-  { value: 118, suffix: "%", label: "Sales productivity uplift" },
-  { value: 207, suffix: "%", label: "YoY revenue growth driven" },
+  { value: "7+", label: "Years building modern data platforms" },
+  { value: "Microsoft", label: "Current client — Fabric platform architecture" },
+  { value: "Awarded", label: "Power BI World Championship 2025" },
+  { value: "Top 5", label: "Excel World Championship — Brazil (FMWC)" },
 ] as const;
 
-export const companies = [
-  "Microsoft",
-  "NuvemShop · Tiendanube",
-  "Axia Agro",
-  "Agrogalaxy",
-  "Adubos Araguaia",
-] as const;
+export type TrustedLogo = {
+  name: string;
+  logo: string;
+  /** Rendering size on the hero wall; marks differ a lot in aspect ratio. */
+  size: "lockup" | "stacked" | "square" | "wordmark";
+};
+
+export const trustedBy: TrustedLogo[] = [
+  { name: "Microsoft", logo: "/logos/microsoft-lockup.png", size: "lockup" },
+  { name: "NuvemShop · Tiendanube", logo: "/logos/nuvemshop.png", size: "wordmark" },
+  { name: "Axia Agro", logo: "/logos/axia-white.png", size: "stacked" },
+  { name: "Agrogalaxy", logo: "/logos/agrogalaxy-white.png", size: "square" },
+  { name: "Adubos Araguaia", logo: "/logos/araguaia-white.png", size: "wordmark" },
+];
 
 export const platforms = [
   { name: "Microsoft Fabric", logo: "/logos/fabric.png" },
@@ -123,7 +130,7 @@ export const projects: Project[] = [
   {
     id: "axia-agro",
     company: "Axia Agro",
-    logo: "/logos/axia.png",
+    logo: "/logos/axia-white.png",
     period: "2024 — 2025",
     title: "60% lower platform cost through consolidation",
     summary:
@@ -143,6 +150,7 @@ export const projects: Project[] = [
   {
     id: "agrogalaxy",
     company: "Agrogalaxy",
+    logo: "/logos/agrogalaxy.png",
     period: "2021 — 2024",
     title: "Commercial excellence, measured from N1 to C-level",
     summary:
@@ -175,18 +183,27 @@ export type Dashboard = {
 
 export const dashboards: Dashboard[] = [
   {
-    id: "report-01",
+    id: "shark-attacks",
     label: "01",
+    title: "Shark Attacks",
+    description:
+      "A deep dive into the data behind recorded shark attacks — explore the story by geography, time and context.",
     url: "https://app.powerbi.com/view?r=eyJrIjoiZjJmZjk1OTYtZDA5Ny00MjAzLTgxM2EtZjc0M2RiMmNhMjY5IiwidCI6ImFjMzk4MDUzLTcxZTUtNGQ4Zi1iYWY4LWNmMGJiY2NmMTI0YyIsImMiOjF9",
   },
   {
-    id: "report-02",
+    id: "legal-corpus",
     label: "02",
+    title: "Legal Corpus Analytics",
+    description:
+      "Interactive analytics over a legal document corpus — slice, search and compare across the collection.",
     url: "https://app.powerbi.com/view?r=eyJrIjoiZThmZGE0OTYtNjcxNS00YzQzLTg3OTQtOWNlZWNmZTAxZDI1IiwidCI6ImFjMzk4MDUzLTcxZTUtNGQ4Zi1iYWY4LWNmMGJiY2NmMTI0YyIsImMiOjF9",
   },
   {
-    id: "report-03",
+    id: "agribusiness-sales",
     label: "03",
+    title: "Agribusiness Sales",
+    description:
+      "Commercial performance for agribusiness — sales, mix and momentum in a single interactive view.",
     url: "https://app.powerbi.com/view?r=eyJrIjoiOWU0ZGVkZmMtZTYzOC00ZTE1LWFiMWQtN2U5NDM2MDQ2MmY0IiwidCI6ImFjMzk4MDUzLTcxZTUtNGQ4Zi1iYWY4LWNmMGJiY2NmMTI0YyIsImMiOjF9",
   },
 ];

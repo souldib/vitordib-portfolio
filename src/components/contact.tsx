@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUp, ArrowUpRight, Download } from "lucide-react";
 import { site } from "@/content/site";
-import { Aurora, Reveal } from "@/components/ui";
+import { Aurora, Magnetic, Reveal } from "@/components/ui";
 
 const links = [
   { label: "Email", value: site.email, href: `mailto:${site.email}` },
@@ -47,7 +47,7 @@ export function Contact() {
         <Reveal delay={0.08}>
           <h2 className="mt-6 max-w-4xl font-display text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.98] tracking-[-0.03em] text-ivory">
             Let&rsquo;s build something{" "}
-            <span className="text-gradient italic">worth trusting.</span>
+            <span className="text-gradient text-gradient-animated italic">worth trusting.</span>
           </h2>
         </Reveal>
 
@@ -60,24 +60,28 @@ export function Contact() {
 
         <Reveal delay={0.22}>
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            <a
-              href={`mailto:${site.email}`}
-              className="group inline-flex items-center gap-2 rounded-full bg-ivory px-7 py-3.5 text-sm font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
-            >
-              {site.email}
-              <ArrowUpRight
-                size={16}
-                className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-              />
-            </a>
-            <a
-              href={site.cv}
-              download
-              className="inline-flex items-center gap-2 rounded-full border border-line-strong px-7 py-3.5 text-sm text-ivory transition-all duration-300 hover:border-azure/60 hover:bg-azure/10"
-            >
-              <Download size={15} />
-              Download CV
-            </a>
+            <Magnetic>
+              <a
+                href={`mailto:${site.email}`}
+                className="group inline-flex items-center gap-2 rounded-full bg-ivory px-7 py-3.5 text-sm font-medium text-ink"
+              >
+                {site.email}
+                <ArrowUpRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                />
+              </a>
+            </Magnetic>
+            <Magnetic strength={0.16}>
+              <a
+                href={site.cv}
+                download
+                className="inline-flex items-center gap-2 rounded-full border border-line-strong px-7 py-3.5 text-sm text-ivory transition-colors duration-300 hover:border-azure/60 hover:bg-azure/10"
+              >
+                <Download size={15} />
+                Download CV
+              </a>
+            </Magnetic>
           </div>
         </Reveal>
 

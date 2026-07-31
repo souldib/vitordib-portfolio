@@ -1,10 +1,12 @@
 /**
  * Turns the raw logo files in Imagens/ into dark-theme-ready assets in public/logos/.
  *
- * The source files are flattened rasters on a white canvas, which look like grey
- * boxes on a dark background. For colour logos we invert the "composited over
- * white" operation to recover per-pixel alpha; for wordmarks that are dark on
- * white we instead derive a white silhouette so they read on the dark surface.
+ * Treatments:
+ * - keyOutWhite: recovers per-pixel alpha from artwork flattened on a white canvas,
+ *   keeping the original colours (for logos that read well on dark).
+ * - keyOutBlack: same idea for artwork flattened on a black canvas.
+ * - whiteStamp:  turns any artwork into a white silhouette, alpha driven by distance
+ *   from white (for dark wordmarks that would vanish on the dark background).
  *
  * Run with: node scripts/process-logos.mjs
  */
@@ -16,25 +18,31 @@ const SRC = "Imagens";
 const OUT = path.join("public", "logos");
 const HEIGHT = 120;
 const WHITE_CUTOFF = 246;
+const BLACK_CUTOFF = 14;
 
-/** Recovers alpha by undoing the composite of a transparent logo over a white canvas. */
+async function rawPixels(input, { flattenOn } = {}) {
+  let pipeline = sharp(input);
+  if (flattenOn) pipeline = pipeline.flatten({ background: flattenOn });
+  return pipeline.ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+}
+
+function toFile(data, info, output) {
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
+    .png()
+    .trim({ threshold: 1 })
+    .resize({ height: HEIGHT, fit: "inside", withoutEnlargement: false })
+    .toFile(output);
+}
+
 async function keyOutWhite(input, output) {
-  const { data, info } = await sharp(input)
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+  const { data, info } = await rawPixels(input);
 
   for (let i = 0; i < data.length; i += 4) {
-    const r = data[i];
-    const g = data[i + 1];
-    const b = data[i + 2];
-    const min = Math.min(r, g, b);
-
+    const min = Math.min(data[i], data[i + 1], data[i + 2]);
     if (min >= WHITE_CUTOFF) {
       data[i + 3] = 0;
       continue;
     }
-
     const alpha = (WHITE_CUTOFF - min) / WHITE_CUTOFF;
     data[i + 3] = Math.round(alpha * 255);
     for (let c = 0; c < 3; c += 1) {
@@ -43,38 +51,43 @@ async function keyOutWhite(input, output) {
     }
   }
 
-  return sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
-    .png()
-    .trim({ threshold: 1 })
-    .resize({ height: HEIGHT, fit: "inside", withoutEnlargement: false })
-    .toFile(output);
+  return toFile(data, info, output);
 }
 
-/** Builds a white silhouette from a dark-on-white wordmark. */
-async function whiteSilhouette(input, output) {
-  const { data, info } = await sharp(input)
-    .flatten({ background: "#ffffff" })
-    .ensureAlpha()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
+async function keyOutBlack(input, output) {
+  const { data, info } = await rawPixels(input);
 
   for (let i = 0; i < data.length; i += 4) {
-    const luminance =
-      0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+    const max = Math.max(data[i], data[i + 1], data[i + 2]);
+    if (max <= BLACK_CUTOFF) {
+      data[i + 3] = 0;
+      continue;
+    }
+    const alpha = max / 255;
+    data[i + 3] = Math.round(alpha * 255);
+    for (let c = 0; c < 3; c += 1) {
+      data[i + c] = Math.max(0, Math.min(255, Math.round(data[i + c] / alpha)));
+    }
+  }
+
+  return toFile(data, info, output);
+}
+
+async function whiteStamp(input, output) {
+  const { data, info } = await rawPixels(input, { flattenOn: "#ffffff" });
+
+  for (let i = 0; i < data.length; i += 4) {
+    const min = Math.min(data[i], data[i + 1], data[i + 2]);
+    const alpha = min >= WHITE_CUTOFF ? 0 : (WHITE_CUTOFF - min) / WHITE_CUTOFF;
     data[i] = 255;
     data[i + 1] = 255;
     data[i + 2] = 255;
-    data[i + 3] = Math.round(Math.max(0, 255 - luminance));
+    data[i + 3] = Math.round(alpha * 255);
   }
 
-  return sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } })
-    .png()
-    .trim({ threshold: 1 })
-    .resize({ height: HEIGHT, fit: "inside", withoutEnlargement: false })
-    .toFile(output);
+  return toFile(data, info, output);
 }
 
-/** Keeps the artwork as-is; used for logos that already sit on their own coloured tile. */
 async function passthrough(input, output) {
   return sharp(input)
     .resize({ height: HEIGHT, fit: "inside", withoutEnlargement: false })
@@ -83,18 +96,23 @@ async function passthrough(input, output) {
 }
 
 const jobs = [
+  // Colour marks for the work cards and platform band
   ["Microsoft_logo.svg.webp", "microsoft.png", keyOutWhite],
   ["Microsoft_Azure.svg.webp", "azure.png", keyOutWhite],
   ["New_Power_BI_Logo.svg.webp", "power-bi.png", keyOutWhite],
   ["images (1).jpg", "fabric.png", keyOutWhite],
-  ["Nuvemshop-logo (1).png", "nuvemshop.png", whiteSilhouette],
-  ["images.jpg", "axia.png", passthrough],
+  ["Agrogalaxy Logo.jpg", "agrogalaxy.png", passthrough],
+  // Trusted-by wall
+  ["6892682-microsoft-logo-icon-editorial-vector-gratis-vetor.jpg", "microsoft-lockup.png", keyOutBlack],
+  ["Nuvemshop-logo (1).png", "nuvemshop.png", whiteStamp],
+  ["Axia Agro Logo.png", "axia-white.png", whiteStamp],
+  ["Agrogalaxy Logo.jpg", "agrogalaxy-white.png", whiteStamp],
+  ["LOGO_ARAGUAIA.webp", "araguaia-white.png", whiteStamp],
 ];
 
 await mkdir(OUT, { recursive: true });
 
 for (const [file, out, handler] of jobs) {
-  const target = path.join(OUT, out);
-  const info = await handler(path.join(SRC, file), target);
-  console.log(`${out.padEnd(16)} ${info.width}x${info.height}`);
+  const info = await handler(path.join(SRC, file), path.join(OUT, out));
+  console.log(`${out.padEnd(22)} ${info.width}x${info.height}`);
 }
