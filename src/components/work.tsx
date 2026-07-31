@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { projects } from "@/content/site";
 import { Reveal, SectionHeading, SpotlightCard } from "@/components/ui";
 
@@ -19,14 +20,26 @@ export function Work() {
               <SpotlightCard className="p-6 sm:p-9">
                 <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
                   <div className="lg:col-span-4">
-                    <div className="flex items-baseline gap-4">
-                      <span className="font-mono text-xs text-faint">
-                        {String(index + 1).padStart(2, "0")}
+                    <div className="flex items-center gap-4">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-line bg-white/[0.03]">
+                        {project.logo ? (
+                          <Image
+                            src={project.logo}
+                            alt={`${project.company} logo`}
+                            width={120}
+                            height={120}
+                            className="h-6 w-auto max-w-[1.75rem] object-contain"
+                          />
+                        ) : (
+                          <span className="font-display text-lg text-muted">
+                            {project.company.charAt(0)}
+                          </span>
+                        )}
                       </span>
                       <div>
                         <p className="text-sm font-medium text-ivory">{project.company}</p>
                         <p className="mt-0.5 font-mono text-[11px] uppercase tracking-[0.18em] text-faint">
-                          {project.period}
+                          {project.period} · {String(index + 1).padStart(2, "0")}
                         </p>
                       </div>
                     </div>

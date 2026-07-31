@@ -1,10 +1,11 @@
 import { Contact } from "@/components/contact";
 import { Credentials } from "@/components/credentials";
+import { Dashboards } from "@/components/dashboards";
 import { Experience } from "@/components/experience";
 import { Expertise } from "@/components/expertise";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
-import { Marquee } from "@/components/marquee";
+import { PlatformBand } from "@/components/platform-band";
 import { Statement } from "@/components/statement";
 import { Work } from "@/components/work";
 import { ScrollProgress } from "@/components/ui";
@@ -16,9 +17,10 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
-        <Marquee />
+        <PlatformBand />
         <Statement />
         <Work />
+        <Dashboards />
         <Expertise />
         <Experience />
         <Credentials />

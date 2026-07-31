@@ -35,6 +35,13 @@ export const companies = [
   "Adubos Araguaia",
 ] as const;
 
+export const platforms = [
+  { name: "Microsoft Fabric", logo: "/logos/fabric.png" },
+  { name: "Power BI", logo: "/logos/power-bi.png" },
+  { name: "Microsoft Azure", logo: "/logos/azure.png" },
+  { name: "Microsoft", logo: "/logos/microsoft.png" },
+] as const;
+
 export const marqueeStack = [
   "Microsoft Fabric",
   "Direct Lake",
@@ -57,6 +64,7 @@ export const marqueeStack = [
 export type Project = {
   id: string;
   company: string;
+  logo?: string;
   period: string;
   title: string;
   summary: string;
@@ -69,6 +77,7 @@ export const projects: Project[] = [
   {
     id: "microsoft-fabric",
     company: "Microsoft",
+    logo: "/logos/microsoft.png",
     period: "2025 — Present",
     title: "One governed Lakehouse for previously siloed telemetry",
     summary:
@@ -95,6 +104,7 @@ export const projects: Project[] = [
   {
     id: "nuvemshop-gold",
     company: "NuvemShop · Tiendanube",
+    logo: "/logos/nuvemshop.png",
     period: "2025 — 2026",
     title: "A Gold Layer that became the single source of truth",
     summary:
@@ -113,6 +123,7 @@ export const projects: Project[] = [
   {
     id: "axia-agro",
     company: "Axia Agro",
+    logo: "/logos/axia.png",
     period: "2024 — 2025",
     title: "60% lower platform cost through consolidation",
     summary:
@@ -147,6 +158,36 @@ export const projects: Project[] = [
       { value: "-60%", label: "Order processing time" },
     ],
     stack: ["Power BI", "CRM / ERP Integration", "AI Scheduling", "SQL"],
+  },
+];
+
+/**
+ * Power BI reports published to web. `title` and `description` are optional —
+ * when empty the gallery falls back to the numbered label.
+ */
+export type Dashboard = {
+  id: string;
+  label: string;
+  title?: string;
+  description?: string;
+  url: string;
+};
+
+export const dashboards: Dashboard[] = [
+  {
+    id: "report-01",
+    label: "01",
+    url: "https://app.powerbi.com/view?r=eyJrIjoiZjJmZjk1OTYtZDA5Ny00MjAzLTgxM2EtZjc0M2RiMmNhMjY5IiwidCI6ImFjMzk4MDUzLTcxZTUtNGQ4Zi1iYWY4LWNmMGJiY2NmMTI0YyIsImMiOjF9",
+  },
+  {
+    id: "report-02",
+    label: "02",
+    url: "https://app.powerbi.com/view?r=eyJrIjoiZThmZGE0OTYtNjcxNS00YzQzLTg3OTQtOWNlZWNmZTAxZDI1IiwidCI6ImFjMzk4MDUzLTcxZTUtNGQ4Zi1iYWY4LWNmMGJiY2NmMTI0YyIsImMiOjF9",
+  },
+  {
+    id: "report-03",
+    label: "03",
+    url: "https://app.powerbi.com/view?r=eyJrIjoiOWU0ZGVkZmMtZTYzOC00ZTE1LWFiMWQtN2U5NDM2MDQ2MmY0IiwidCI6ImFjMzk4MDUzLTcxZTUtNGQ4Zi1iYWY4LWNmMGJiY2NmMTI0YyIsImMiOjF9",
   },
 ];
 
@@ -338,6 +379,7 @@ export const languages = [
 
 export const nav = [
   { label: "Work", href: "#work" },
+  { label: "Dashboards", href: "#dashboards" },
   { label: "Expertise", href: "#expertise" },
   { label: "Experience", href: "#experience" },
   { label: "Credentials", href: "#credentials" },
